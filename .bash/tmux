@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Version TH001
+
+# Bashrc SSH-tmux wrapper | Spencer Tipping
+# Licensed under the terms of the MIT source code license
+
+# Source this just after the PS1-check to enable auto-tmuxing of your SSH
+# sessions. See https://github.com/spencertipping/bashrc-tmux for usage
+# information.
+
+if [[ -z "$TMUX" && -n "$SSH_CONNECTION" ]] && which tmux >& /dev/null; then
+  # JGH Start
+  # Little tweak to make things work with tmux 1.5, which does not have
+  # the -F flag.
+  # if ! tmux ls -F '#{session_name}' | grep "^ssh-$USER$" > /dev/null; then
+  if ! tmux ls 2>&1 | cut -d ':' -f1 | grep "^ssh-$USER$" > /dev/null; then
+  # JGH End
+    echo "Starting new overall session"
+    tmux -2 new-session -s ssh-$USER \; detach
+  fi
+
+  # Allocating a session ID: always just bump the counter. Because of
+  # differences between bash and zsh, working with arrays to densely pack
+  # session IDs is cumbersome.
+
+  # JGH Start
+  # Little tweak to make things work with tmux 1.5, which does not have
+  # the -F flag.
+  # sessions=($(tmux ls -F '#{session_name}' \
+  #             | egrep "^ssh-$USER-[0-9]+$" \
+  #             | sed "s/^ssh-$USER-//" \
+  #             | sort -n))
+  sessions=($(tmux ls | cut -d ':' -f1 \
+              | egrep "^ssh-$USER-[0-9]+$" \
+              | sed "s/^ssh-$USER-//" \
+              | sort -n))
+  # JGH End
+  session_index=${#sessions[@]}
+
+  for ((i = 1; i < ${#sessions[@]}; ++i)); do
+    if (( ${sessions[$i]} - ${sessions[$((i - 1))]} > 1 )); then
+      session_index=$((${sessions[$((i - 1))]} + 1))
+      break
+    fi
+  done
+
+  echo "Starting new throw-away session $session_index"
+  exec tmux -2 new-session -s ssh-$USER-$session_index -t ssh-$USER
+fi

@@ -1,0 +1,77 @@
+#!/bin/bash
+#
+# Establishes ssh-agent
+#
+# Comments: finds, hooks on, runs or whatever is needed
+#
+
+if [ -n "${SSH_AUTH_SOCK}" ] && [ -n "${SSH_AGENT_PID}" ]; then
+    return 0
+fi
+
+if [ "${USER}" == "root" ]; then
+    return 0
+fi
+
+#
+# Define
+#
+ssh_env=/tmp/${USER}/ssh
+
+Run_new_agent()
+{
+    echo "Starting ssh-agent"
+    eval `ssh-agent -s`
+    
+    # leave env traces in temp
+    mkdir -p ${ssh_env}
+    rm -f ${ssh_env}/PID*
+    rm -f ${ssh_env}/SOCK*
+    touch ${ssh_env}/PID_${SSH_AGENT_PID}
+    ln -s ${SSH_AUTH_SOCK} ${ssh_env}/SOCK
+    
+    trap "kill ${SSH_AGENT_PID}; rm -rf ${ssh_env}" 0
+}
+
+Try_env()
+{
+    # look for defined PID and socket
+    if [ ! -e ${ssh_env}/PID_* ]; then
+        return 1
+    fi
+    local ssh_PID_f=`ls ${ssh_env}/PID_*`
+    local PID=${ssh_PID_f##*${ssh_env}/PID_}
+    
+    if [ ! -e ${ssh_env}/SOCK ]; then
+        return 1
+    fi
+    local SOCK=`readlink -f ${ssh_env}/SOCK`
+    
+    # check found PID and socket
+    local user_=`ps -p ${PID} -o user=`
+    local comm_=`ps -p ${PID} -o comm=`
+    if [ ${user_} != ${USER} ]; then
+        return 1
+    fi
+    if [ ${comm_} != "ssh-agent" ]; then
+        return 1
+    fi
+    
+    # assign found PID and socket
+    export SSH_AUTH_SOCK=${SOCK}
+    export SSH_AGENT_PID=${PID}
+    
+    return 0
+}
+
+#
+# Execute
+#
+Try_env
+if [ $? -eq 0 ]; then
+    return 0
+fi
+
+Run_new_agent
+
+return 0
