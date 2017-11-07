@@ -73,9 +73,10 @@ Extract_src()
 
 Build_install_libevent()
 {
+    echo "Building and installing libevent"
     cd ${INSTALL_LOCATION}/src/${LIBEVENT_ARCH_NAME_}
     
-    bash ${PARENT_PATH}/make_install_libevent.sh ${NCORES} >> \
+    . ${PARENT_PATH}/make_install_libevent.sh ${NCORES} >> \
         ${CURRENT_DIR}/${LOG_FILE} 2>&1
     if [ ! $? -eq 0 ]; then
         echo -e "Build error in ${LIBEVENT_ARCH_NAME_}. See ${LOG_FILE}"
@@ -88,9 +89,10 @@ Build_install_libevent()
 
 Build_install_ncurses()
 {
+    echo "Building and installing ncurses"
     cd ${INSTALL_LOCATION}/src/${NCURSES_ARCH_NAME_}
 
-    bash ${PARENT_PATH}/make_install_ncurses.sh ${NCORES} >> \
+    . ${PARENT_PATH}/make_install_ncurses.sh ${NCORES} >> \
         ${CURRENT_DIR}/${LOG_FILE} 2>&1
     if [ ! $? -eq 0 ]; then
         echo -e "Build error in ${NCURSES_ARCH_NAME_}. See ${LOG_FILE}"
@@ -103,9 +105,10 @@ Build_install_ncurses()
 
 Build_install_tmux()
 {
+    echo "Building and installing tmux"
     cd ${INSTALL_LOCATION}/src/${TMUX_ARC_NAME_}
 
-    bash ${PARENT_PATH}/make_install_tmux.sh ${NCORES} >> \
+    . ${PARENT_PATH}/make_install_tmux.sh ${NCORES} >> \
         ${CURRENT_DIR}/${LOG_FILE} 2>&1
     if [ ! $? -eq 0 ]; then
         echo -e "Build error in ${TMUX_ARC_NAME_}. See ${LOG_FILE}"
@@ -118,7 +121,7 @@ Build_install_tmux()
 
 Build_install()
 {
-    echo "Building stuff (log file: ${LOG_FILE})"
+    echo "Building and installing stuff (log file: ${LOG_FILE})"
     
     Build_install_libevent
     Build_install_ncurses
