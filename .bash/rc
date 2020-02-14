@@ -147,7 +147,4 @@ if [ "`hostname | grep odysei`" = "" ]; then
 	echo `hostname` >> ~/.bash_host_history
 fi
 
-echo ${ENV_VERSIONS}
-echo "
-A stardard bash config with custom additions is loaded. V1.0.5
-"
+echo ${ENV_VERSIONS} "- V1.0.6"
