@@ -103,7 +103,7 @@ Build_install_libevent()
     . ${PARENT_PATH}/make_install_libevent.sh ${NCORES} >> \
         ${CURRENT_DIR}/${LOG_FILE} 2>&1
     if [ ! $? -eq 0 ]; then
-        echo -e "Build error in ${LIBEVENT_ARCH_NAME_}. See ${LOG_FILE}"
+        echo -e "Build error in libevent ${LIBEVENT_GIT_VERSION}. See ${LOG_FILE}"
         cd ${CURRENT_DIR}
         return 1
     fi
@@ -137,7 +137,7 @@ Build_install_tmux()
     . ${PARENT_PATH}/make_install_tmux.sh ${NCORES} >> \
         ${CURRENT_DIR}/${LOG_FILE} 2>&1
     if [ ! $? -eq 0 ]; then
-        echo -e "Build error in ${TMUX_ARC_NAME_}. See ${LOG_FILE}"
+        echo -e "Build error in tmux ${TMUX_GIT_VERSION}. See ${LOG_FILE}"
         cd ${CURRENT_DIR}
         return 1
     fi
