@@ -3,7 +3,7 @@
 CURRENT_DIR=${PWD}
 PARENT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd -P)
 
-. ${PARENT_PATH}/run_me_sett.sh
+. ${PARENT_PATH}/run_me.settings
 
 #
 #   Prerequisites
@@ -68,7 +68,7 @@ Extract_src()
     tar -xf ${CURRENT_DIR}/${TMUX_ARC_NAME}
 
     if [ ! -e ${NCURSES_ARCH_NAME_} ]; then
-        echo "Whoops! Made for ${NCURSES_ARCH_NAME_}. Update run_me_sett.sh!"
+        echo "Whoops! Made for ${NCURSES_ARCH_NAME_}. Update run_me.settings!"
         cd ${CURRENT_DIR}
         return 1
     fi
